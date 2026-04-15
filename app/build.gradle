@@ -66,7 +66,7 @@ android {
 dependencies {
 
     compileOnly files('../../../jars/framework.jar')
-    compileOnly files('../../../jars/autochips.jar')
+//    compileOnly files('../../../jars/autochips.jar')
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'

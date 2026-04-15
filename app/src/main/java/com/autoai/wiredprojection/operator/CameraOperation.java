@@ -19,7 +19,6 @@ import android.os.Looper;
 import android.util.Size;
 import android.view.Surface;
 
-import com.autochips.backcar.BackCar;
 import com.autoai.wiredprojection.util.Constants;
 import com.autoai.wiredprojection.util.Constants.*;
 import com.autoai.wiredprojection.util.LogUtil;
@@ -293,7 +292,6 @@ public class CameraOperation {
             if (mRespondRVCFirstFrame) {
                 mRespondRVCFirstFrame = false;
                 LogUtil.d(TAG, "first frame with rvc mode");
-                new BackCar().sendRVCCompleted();
             }
             if (mSourceInfoKey != null) {
                 int[] sourceInfo = result.get(mSourceInfoKey);

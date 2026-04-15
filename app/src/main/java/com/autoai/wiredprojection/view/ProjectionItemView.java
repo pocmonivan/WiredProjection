@@ -27,11 +27,11 @@ import com.autoai.wiredprojection.util.LogUtil;
 
 import java.util.List;
 
-public class HdmiItemView extends RelativeLayout {
-    private static final String TAG = "HdmiItemView";
+public class ProjectionItemView extends RelativeLayout {
+    private static final String TAG = "ProjectionItemView";
 
     private Context mContext;
-    private String mCameraID = Constants.CAMERA_ID_HDMI;
+    private String mCameraID = Constants.CAMERA_ID_PROJECTION;
 
     private List<Resolution> mResolutions;
     private Resolution mCurrentResolution;
@@ -50,22 +50,22 @@ public class HdmiItemView extends RelativeLayout {
 
     private static final int HIDE_EXIT_BTN = 1;
 
-    public HdmiItemView(Context context) {
+    public ProjectionItemView(Context context) {
         this(context, null);
     }
 
-    public HdmiItemView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public ProjectionItemView(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public HdmiItemView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ProjectionItemView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView(context);
     }
 
     private void initView(Context context) {
         mContext = context;
-        LayoutInflater.from(mContext).inflate(R.layout.hdmi_item_layout, this, true);
+        LayoutInflater.from(mContext).inflate(R.layout.projection_item_layout, this, true);
         mSurfaceView = findViewById(R.id.sv_preview);
         mNoSignalView = findViewById(R.id.item_no_signal);
         mIvExit = findViewById(R.id.iv_exit);

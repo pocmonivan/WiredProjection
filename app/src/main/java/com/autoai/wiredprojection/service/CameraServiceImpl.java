@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.autoai.wiredprojection.ICameraService;
 import com.autoai.wiredprojection.ICameraServiceCallback;
 import com.autoai.wiredprojection.R;
-import com.autoai.wiredprojection.activity.HdmiActivity;
+import com.autoai.wiredprojection.activity.ProjectionActivity;
 import com.autoai.wiredprojection.bean.Resolution;
 import com.autoai.wiredprojection.operator.AudioInManager;
 import com.autoai.wiredprojection.operator.AudioInManagerListener;
@@ -42,21 +42,21 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
     private static final String ACTION_QB_ON = "autochips.intent.action.QB_POWERON";
 
     private static final int SHOW_TOAST = 1;
-    private static final int SHOW_HDMI_DIALOG = 2;
-    private static final int HIDE_HDMI_DIALOG = 3;
+    private static final int SHOW_PROJECTION_DIALOG = 2;
+    private static final int HIDE_PROJECTION_DIALOG = 3;
 
     private Map<String, CameraStateMachine> mCameraStateMachineMap;
     private final AudioInManager mAudioInManager;
     private PowerManager.WakeLock mWakeLock;
     private final Context mContext;
-    private boolean mHdmiPlugged;
+    private boolean mProjectionPlugged;
 
-    private ConfirmationDialog mHdmiDialog;
+    private ConfirmationDialog mProjectionDialog;
 
-    private String mHdmiCameraId = Constants.CAMERA_ID_HDMI;
-    private boolean mHasEnableHdmiAudio = false;
+    private final String mProjectionCameraId = Constants.CAMERA_ID_PROJECTION;
+    private boolean mHasEnableProjectionAudio = false;
 
-    private HdmiStatusObserver mHdmiStatusObserver;
+    private ProjectionStatusObserver mProjectionStatusObserver;
 
     public CameraServiceImpl(Context context) {
         mContext = context;
@@ -79,13 +79,13 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
         });
         mAudioInManager.initialize();
         mCameraStateMachineMap = new HashMap<>();
-        initHdmiDialog();
+        initProjectionDialog();
         initCameraStateMachine();
         registerQBReceiver();
 
-        handleHdmiStatusEvent();
-        mHdmiStatusObserver = new HdmiStatusObserver();
-        mHdmiStatusObserver.startPolling();
+        handleProjectionStatusEvent();
+        mProjectionStatusObserver = new ProjectionStatusObserver();
+        mProjectionStatusObserver.startPolling();
         releaseWakeLock();
     }
 
@@ -115,66 +115,66 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
     }
 
     private void initCameraStateMachine() {
-        if (mHdmiCameraId != null) {
-            getCameraStateMachine(mHdmiCameraId);
+        if (mProjectionCameraId != null) {
+            getCameraStateMachine(mProjectionCameraId);
         }
     }
 
-    private void handleHdmiPlugged() {
-        LogUtil.d(TAG, "handleHdmiPlugged");
-        if (!mHasEnableHdmiAudio) {
-            enableHdmiAudio();
-            mHasEnableHdmiAudio = true;
+    private void handleProjectionPlugged() {
+        LogUtil.d(TAG, "handleProjectionPlugged");
+        if (!mHasEnableProjectionAudio) {
+            enableProjectionAudio();
+            mHasEnableProjectionAudio = true;
         }
 
-        startHdmiProjection();
+        startProjection();
     }
 
-    private void handleHdmiUnplugged() {
-        LogUtil.d(TAG, "handleHdmiUnplugged");
-        if (mHasEnableHdmiAudio) {
-            disableHdmiAudio();
-            mHasEnableHdmiAudio = false;
+    private void handleProjectionUnplugged() {
+        LogUtil.d(TAG, "handleProjectionUnplugged");
+        if (mHasEnableProjectionAudio) {
+            disableProjectionAudio();
+            mHasEnableProjectionAudio = false;
         }
 
-        stopHdmiProjection();
+        stopProjection();
     }
 
-    private void startHdmiProjection() {
-        LogUtil.d(TAG, "startHdmiProjection begin");
+    private void startProjection() {
+        LogUtil.d(TAG, "startProjection begin");
 
-        if (mHdmiPlugged) {
-            LogUtil.w(TAG, "start hdmi projection when has not stop it");
+        if (mProjectionPlugged) {
+            LogUtil.w(TAG, "start projection when has not stop it");
             return;
         }
-        mHdmiPlugged = true;
+        mProjectionPlugged = true;
 
         LogUtil.d(TAG, "Constants.sIsSvForeground=" + Constants.sIsSvForeground);
         if (!Constants.sIsSvForeground) {
-            mHandler.sendEmptyMessage(SHOW_HDMI_DIALOG);
+            mHandler.sendEmptyMessage(SHOW_PROJECTION_DIALOG);
         }
 
-        LogUtil.d(TAG, "startHdmiProjection end");
+        LogUtil.d(TAG, "startProjection end");
     }
 
-    private void stopHdmiProjection() {
-        LogUtil.d(TAG, "stopHdmiProjection begin");
+    private void stopProjection() {
+        LogUtil.d(TAG, "stopProjection begin");
 
-        if (!mHdmiPlugged) {
-            LogUtil.w(TAG, "didn't start hdmi projection, skip this signal");
+        if (!mProjectionPlugged) {
+            LogUtil.w(TAG, "didn't start projection, skip this signal");
             return;
         }
-        mHdmiPlugged = false;
+        mProjectionPlugged = false;
 
         LogUtil.d(TAG, "Constants.sIsSvForeground=" + Constants.sIsSvForeground);
-        mHandler.sendEmptyMessage(HIDE_HDMI_DIALOG);
+        mHandler.sendEmptyMessage(HIDE_PROJECTION_DIALOG);
 
         if (Constants.sIsSvForeground) {
             mHandler.sendMessage(mHandler.obtainMessage(SHOW_TOAST, mContext.getString(R.string.device_lost_link)));
-            notifyInfo(Constants.Event.HDMI_EXIT, -1, -1, mHdmiCameraId);
+            notifyInfo(Constants.Event.PROJECTION_EXIT, -1, -1, mProjectionCameraId);
         }
 
-        LogUtil.d(TAG, "stopHdmiProjection end");
+        LogUtil.d(TAG, "stopProjection end");
     }
 
     private void registerQBReceiver() {
@@ -452,7 +452,7 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
     public void onDestroy() {
         LogUtil.d(TAG, "onDestroy");
         unregisterQBReceiver();
-        mHdmiStatusObserver.stopPolling();
+        mProjectionStatusObserver.stopPolling();
         mAudioInManager.release();
         mCameraStateMachineMap.clear();
     }
@@ -466,21 +466,21 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
         }
     };
 
-    public void enableHdmiAudio() {
+    public void enableProjectionAudio() {
         mAudioInManager.openAudioIn();
     }
 
-    public void disableHdmiAudio() {
+    public void disableProjectionAudio() {
         mAudioInManager.closeAudioIn();
     }
 
-    private void initHdmiDialog() {
-        mHdmiDialog = new ConfirmationDialog.Builder(mContext)
+    private void initProjectionDialog() {
+        mProjectionDialog = new ConfirmationDialog.Builder(mContext)
                 .setTitle(mContext.getString(R.string.new_device_detected))
                 .setConfirmListener(new ConfirmationDialog.ConfirmListener() {
                     @Override
                     public void onConfirm() {
-                        HdmiActivity.launch(mContext);
+                        ProjectionActivity.launch(mContext);
                     }
 
                     @Override
@@ -494,28 +494,28 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
     /**
      * 检测到新设备接入提示框
      */
-    private void showHdmiDialog() {
-        if (mHdmiDialog != null && !mHdmiDialog.isShowing()) {
-            mHdmiDialog.show();
+    private void showProjectionDialog() {
+        if (mProjectionDialog != null && !mProjectionDialog.isShowing()) {
+            mProjectionDialog.show();
         }
     }
 
-    private void hideHdmiDialog() {
-        if (mHdmiDialog != null && mHdmiDialog.isShowing()) {
-            mHdmiDialog.dismiss();
+    private void hideProjectionDialog() {
+        if (mProjectionDialog != null && mProjectionDialog.isShowing()) {
+            mProjectionDialog.dismiss();
         }
     }
 
     /**
-     * 处理hdmi节点变化
+     * 处理Type-C节点变化
      */
-    private synchronized void handleHdmiStatusEvent() {
-        boolean hdmiStatus = Constants.isHdmiPlugged();
-        LogUtil.d(TAG, "handleHdmiStatusEvent, hdmiStatus=" + hdmiStatus);
-        if(hdmiStatus) {
-            handleHdmiPlugged();
+    private synchronized void handleProjectionStatusEvent() {
+        boolean projectionStatus = Constants.isProjectionPlugged();
+        LogUtil.d(TAG, "handleProjectionStatusEvent, projectionStatus=" + projectionStatus);
+        if(projectionStatus) {
+            handleProjectionPlugged();
         } else {
-            handleHdmiUnplugged();
+            handleProjectionUnplugged();
         }
     }
 
@@ -528,11 +528,11 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
                     String message = (String) msg.obj;
                     AutoToast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                     break;
-                case SHOW_HDMI_DIALOG:
-                    showHdmiDialog();
+                case SHOW_PROJECTION_DIALOG:
+                    showProjectionDialog();
                     break;
-                case HIDE_HDMI_DIALOG:
-                    hideHdmiDialog();
+                case HIDE_PROJECTION_DIALOG:
+                    hideProjectionDialog();
                     break;
                 default:
                     super.handleMessage(msg);
@@ -543,22 +543,22 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
 
 
     /**
-     * 监听HDMI节点变化
+     * 监听Type-C节点变化
      */
-    private class HdmiStatusObserver {
+    private class ProjectionStatusObserver {
 
         private boolean lastValue; // 上一次的节点值
         private HandlerThread handlerThread; // 用于轮询的 HandlerThread
         private Handler handler; // 用于处理轮询任务的 Handler
         private static final long POLLING_INTERVAL_MS = 100; // 轮询间隔
 
-        public HdmiStatusObserver() {
-            lastValue = Constants.isHdmiPlugged();
+        public ProjectionStatusObserver() {
+            lastValue = Constants.isProjectionPlugged();
         }
 
         // 读取节点值的函数
         private boolean readNodeValue() {
-            return Constants.isHdmiPlugged();
+            return Constants.isProjectionPlugged();
         }
 
         // 轮询任务
@@ -567,11 +567,11 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
             public void run() {
                 boolean currentValue = readNodeValue();
                 if (currentValue != lastValue) {
-                    LogUtil.d(TAG, "------hdmi status changed: " + currentValue);
+                    LogUtil.d(TAG, "------projection status changed: " + currentValue);
                     if(currentValue) {
-                        handleHdmiPlugged();
+                        handleProjectionPlugged();
                     } else {
-                        handleHdmiUnplugged();
+                        handleProjectionUnplugged();
                     }
                     lastValue = currentValue; // 更新上一次的值
                 }

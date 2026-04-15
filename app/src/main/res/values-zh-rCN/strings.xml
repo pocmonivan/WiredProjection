@@ -6,6 +6,6 @@
     <string name="CANCEL">取消</string>
     <string name="new_device_detected">检测到新设备接入，点击进入投屏画面</string>
     <string name="device_lost_link">有线投屏设备失去连接，退出投屏</string>
-    <string name="link_description_start">使用HDMI接口的数据线将设备连接至于带有“&#160;</string>
+    <string name="link_description_start">使用Type-C接口的数据线将设备连接至于带有“&#160;</string>
     <string name="link_description_end">&#160;”标志的接口</string>
 </resources>

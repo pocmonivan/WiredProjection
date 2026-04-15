@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Constants {
 
-    public static final String CAMERA_ID_HDMI = "10";
+    public static final String CAMERA_ID_PROJECTION = "10";
 
     public static final boolean DEFAULT_STOP_PREVIEW = false;
     public static final int DEFAULT_VIDEO_WIDTH = 1280;
@@ -20,17 +20,17 @@ public class Constants {
     public static final int DEFAULT_SATURATION_VALUE = 128;
     public static final int DEFAULT_CONTRAST_VALUE = 128;
 
-    public static final String SYS_HDMI_STATUS = "/sys/KCbox_E1_IF/KCbox_E1_linkA_status";
-    public static final String SYS_HDMI_PLUGGED = "linkA:1";
+    public static final String SYS_PROJECTION_STATUS = "/sys/KCbox_E1_IF/KCbox_E1_linkA_status";
+    public static final String SYS_PROJECTION_PLUGGED = "linkA:1";
 
     public static boolean sIsSvForeground = false;
 
-    public static boolean isHdmiPlugged() {
+    public static boolean isProjectionPlugged() {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(SYS_HDMI_STATUS));
+            BufferedReader reader = new BufferedReader(new FileReader(SYS_PROJECTION_STATUS));
             String status = reader.readLine();
             reader.close();
-            if(!TextUtils.isEmpty(status) && status.trim().equals(SYS_HDMI_PLUGGED)) {
+            if(!TextUtils.isEmpty(status) && status.trim().equals(SYS_PROJECTION_PLUGGED)) {
                 return true;
             }
         } catch (IOException e) {
@@ -75,7 +75,7 @@ public class Constants {
     }
 
     public interface Event {
-        int HDMI_EXIT = 8;
+        int PROJECTION_EXIT = 8;
     }
 
     public static String operaToString(int operation) {

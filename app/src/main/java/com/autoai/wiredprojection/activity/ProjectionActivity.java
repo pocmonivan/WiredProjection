@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,23 +18,23 @@ import com.autoai.wiredprojection.bean.Resolution;
 import com.autoai.wiredprojection.service.CameraService;
 import com.autoai.wiredprojection.util.Constants;
 import com.autoai.wiredprojection.util.LogUtil;
-import com.autoai.wiredprojection.view.HdmiItemView;
+import com.autoai.wiredprojection.view.ProjectionItemView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HdmiActivity extends AppCompatActivity {
-    private static final String TAG = "HdmiActivity";
+public class ProjectionActivity extends AppCompatActivity {
+    private static final String TAG = "ProjectionActivity";
 
     private ICameraService mCameraService;
 
-    private HdmiItemView mHdmiItemView;
+    private ProjectionItemView mProjectionItemView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setAppFullScreen();
-        setContentView(R.layout.activity_hdmi);
+        setContentView(R.layout.activity_projection);
         initView();
         bindCameraService();
     }
@@ -59,10 +58,10 @@ public class HdmiActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        mHdmiItemView = findViewById(R.id.hdmi_item_view);
-        boolean isHdmiPlugged = Constants.isHdmiPlugged();
-        LogUtil.d(TAG, "initView, isHdmiPlugged=" + isHdmiPlugged);;
-        mHdmiItemView.setSignalStatus(isHdmiPlugged);
+        mProjectionItemView = findViewById(R.id.projection_item_view);
+        boolean isProjectionPlugged = Constants.isProjectionPlugged();
+        LogUtil.d(TAG, "initView, isProjectionPlugged=" + isProjectionPlugged);;
+        mProjectionItemView.setSignalStatus(isProjectionPlugged);
     }
 
     @Override
@@ -95,14 +94,14 @@ public class HdmiActivity extends AppCompatActivity {
     }
 
     private void notifyCameraItemResume() {
-        if (mHdmiItemView != null) {
-            mHdmiItemView.onResume();
+        if (mProjectionItemView != null) {
+            mProjectionItemView.onResume();
         }
     }
 
     private void notifyCameraItemStop() {
-        if (mHdmiItemView != null) {
-            mHdmiItemView.onStop();
+        if (mProjectionItemView != null) {
+            mProjectionItemView.onStop();
         }
     }
 
@@ -134,7 +133,7 @@ public class HdmiActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            initCameraItemData(mHdmiItemView);
+            initCameraItemData(mProjectionItemView);
         }
 
         @Override
@@ -144,8 +143,8 @@ public class HdmiActivity extends AppCompatActivity {
         }
     };
 
-    private void initCameraItemData(HdmiItemView item) {
-        String cameraId = Constants.CAMERA_ID_HDMI;
+    private void initCameraItemData(ProjectionItemView item) {
+        String cameraId = Constants.CAMERA_ID_PROJECTION;
         Resolution resolution;
         List<Resolution> resolutionList;
         int cameraState;
@@ -174,9 +173,9 @@ public class HdmiActivity extends AppCompatActivity {
         switch (error) {
             case Constants.CallBackMsg.ERROR_CAMERA_NOT_ACCESS:
             case Constants.CallBackMsg.ERROR_CAMERA_NOT_AVAILABLE:
-                if (cameraId.equals(Constants.CAMERA_ID_HDMI) && mHdmiItemView != null) {
+                if (cameraId.equals(Constants.CAMERA_ID_PROJECTION) && mProjectionItemView != null) {
                     //TODO
-                    mHdmiItemView.setSignalStatus(false);
+                    mProjectionItemView.setSignalStatus(false);
                 }
                 break;
             default:
@@ -195,9 +194,9 @@ public class HdmiActivity extends AppCompatActivity {
             LogUtil.d(TAG, "onCameraStateChanged, cameraId = " + cameraId
                     + ", cameraState = " + Constants.cameraStateToString(cameraState));
 
-            if (cameraId.equals(Constants.CAMERA_ID_HDMI) && mHdmiItemView != null) {
+            if (cameraId.equals(Constants.CAMERA_ID_PROJECTION) && mProjectionItemView != null) {
                 //TODO
-                mHdmiItemView.changeCameraState(cameraState);
+                mProjectionItemView.changeCameraState(cameraState);
             }
         }
 
@@ -212,9 +211,9 @@ public class HdmiActivity extends AppCompatActivity {
         public void onSignalStateChanged(String cameraId, int signalState) throws RemoteException {
             LogUtil.d(TAG, "onSignalStateChanged, cameraId = " + cameraId
                     + ", signalState = " + Constants.signalStateToString(signalState));
-            if (cameraId.equals(Constants.CAMERA_ID_HDMI) && mHdmiItemView != null) {
+            if (cameraId.equals(Constants.CAMERA_ID_PROJECTION) && mProjectionItemView != null) {
                 //TODO
-                mHdmiItemView.setSignalStatus(signalState == Constants.SignalState.SIGNAL_COME);
+                mProjectionItemView.setSignalStatus(signalState == Constants.SignalState.SIGNAL_COME);
             }
         }
 
@@ -222,7 +221,7 @@ public class HdmiActivity extends AppCompatActivity {
         public void onInfoNotify(int event, int arg1, int arg2, String cameraId) throws RemoteException {
             LogUtil.d(TAG, "onInfoNotify, event = " + event + ", arg1 = " + arg1
                     + ", arg2 = " + arg2 + ", cameraId = " + cameraId);
-            if (event == Constants.Event.HDMI_EXIT) {
+            if (event == Constants.Event.PROJECTION_EXIT) {
                 if (mCameraService != null) {
                     try{
                         mCameraService.unregisterCameraServiceCallback(mCallback);
@@ -244,7 +243,7 @@ public class HdmiActivity extends AppCompatActivity {
             return;
         }
 
-        Intent intent = new Intent(context, HdmiActivity.class);
+        Intent intent = new Intent(context, ProjectionActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(intent);
     }

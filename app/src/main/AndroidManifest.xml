@@ -14,7 +14,7 @@
         android:persistent="true">
 
         <activity
-            android:name="com.autoai.wiredprojection.activity.HdmiActivity"
+            android:name="com.autoai.wiredprojection.activity.ProjectionActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/Theme.DVR">

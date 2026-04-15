@@ -6,6 +6,6 @@
     <string name="CANCEL">Cancel</string>
     <string name="new_device_detected">A new device is detected, click to enter the screen projection screen</string>
     <string name="device_lost_link">The wired screen projection device loses connection and exits the screen projection</string>
-    <string name="link_description_start">Use an HDMI cable to connect the device to the port marked with the \"&#160;</string>
+    <string name="link_description_start">Use an Type-C cable to connect the device to the port marked with the \"&#160;</string>
     <string name="link_description_end">&#160;\" symbol.</string>
 </resources>
