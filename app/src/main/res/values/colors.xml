@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="light_blue_400">#FF29B6F6</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="gray_400">#FFBDBDBD</color>
+    <color name="gray_600">#FF757575</color>
+    <color name="translucent">#48000000</color>
+    <color name="gray">#FF808080</color>
+    <color name="transparent">#00000000</color>
+    <color name="setting_bg">#66666666</color>
+    <color name="black_20">#33000000</color>
+    <color name="black_50">#80000000</color>
+    <color name="black_80">#CC000000</color>
+    <color name="white_30">#4CFFFFFF</color>
+    <color name="white_50">#80FFFFFF</color>
+
+    <color name="auto_dlg_title_text_color">@color/black_80</color>
+    <color name="auto_dlg_content_text_color">@color/black_80</color>
+    <color name="auto_dlg_btn_bg_color_normal">@color/white_30</color>
+    <color name="dlg_btn_text_normal_color">@color/black_80</color>
+    <color name="dlg_btn_text_pressed_color">#FF348FE7</color>
+    <color name="dlg_btn_text_disable_color">@color/black_80</color>
+    <color name="dlg_item_divider_color">@color/black_20</color>
+
+</resources>

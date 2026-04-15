@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout style="@style/auto_dlg_style">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingHorizontal="50dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/auto_dlg_title_style"
+                tools:text="dlgTitle" />
+
+            <TextView
+                android:id="@+id/content"
+                style="@style/auto_dlg_content_style"
+                tools:text="dlgContent"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_btn"
+            style="@style/auto_dlg_btn_layout_style"
+            android:background="@drawable/auto_dlg_btn_bg_color_normal"
+            android:divider="@color/dlg_item_divider_color"
+            android:dividerPadding="20dp"
+            android:showDividers="middle">
+
+            <TextView
+                android:id="@+id/tv_left"
+                style="@style/auto_dlg_btn_confirm_style"
+                android:text="@string/CONFIRM" />
+
+            <TextView
+                android:id="@+id/tv_right"
+                style="@style/auto_dlg_btn_cancel_style"
+                android:text="@string/CANCEL" />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

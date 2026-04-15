@@ -1,0 +1,2 @@
+include ':WiredProjection'
+project(":WiredProjection").projectDir = file("./app")
