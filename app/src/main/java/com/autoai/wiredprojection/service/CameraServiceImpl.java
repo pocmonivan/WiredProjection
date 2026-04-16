@@ -54,8 +54,6 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
     private ConfirmationDialog mProjectionDialog;
 
     private final String mProjectionCameraId = Constants.CAMERA_ID_PROJECTION;
-    private boolean mHasEnableProjectionAudio = false;
-
     private ProjectionStatusObserver mProjectionStatusObserver;
 
     public CameraServiceImpl(Context context) {
@@ -122,21 +120,11 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
 
     private void handleProjectionPlugged() {
         LogUtil.d(TAG, "handleProjectionPlugged");
-        if (!mHasEnableProjectionAudio) {
-            enableProjectionAudio();
-            mHasEnableProjectionAudio = true;
-        }
-
         startProjection();
     }
 
     private void handleProjectionUnplugged() {
         LogUtil.d(TAG, "handleProjectionUnplugged");
-        if (mHasEnableProjectionAudio) {
-            disableProjectionAudio();
-            mHasEnableProjectionAudio = false;
-        }
-
         stopProjection();
     }
 
@@ -279,11 +267,6 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
     }
 
     @Override
-    public boolean isPreviewStarted(String cameraId) {
-        return getCameraStateMachine(cameraId).isPreviewRequest();
-    }
-
-    @Override
     public void setResolution(String cameraId, int width, int height) {
         LogUtil.d(TAG,"setResolution - cameraId:"+cameraId+" width:"+width+" height:"+height);
         getCameraStateMachine(cameraId).setResolution(width, height);
@@ -305,11 +288,6 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
         LogUtil.d(TAG,"getCurrentResolution - cameraId:"+cameraId);
         Size size = getCameraStateMachine(cameraId).getResolution();
         return new Resolution(size.getWidth(), size.getHeight());
-    }
-
-    @Override
-    public void setStoragePath(String path) {
-        LogUtil.d(TAG,"setStoragePath ignored, storage feature removed: " + path);
     }
 
     @Override
@@ -466,11 +444,19 @@ public class CameraServiceImpl extends ICameraService.Stub implements CameraStat
         }
     };
 
+    @Override
     public void enableProjectionAudio() {
+        if (!mProjectionPlugged) {
+            LogUtil.w(TAG, "enableProjectionAudio ignored: projection not plugged");
+            return;
+        }
+        LogUtil.d(TAG, "enableProjectionAudio");
         mAudioInManager.openAudioIn();
     }
 
+    @Override
     public void disableProjectionAudio() {
+        LogUtil.d(TAG, "disableProjectionAudio");
         mAudioInManager.closeAudioIn();
     }
 

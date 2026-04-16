@@ -70,6 +70,13 @@ public class ProjectionActivity extends AppCompatActivity {
         LogUtil.d(TAG, "onResume");
         Constants.sIsSvForeground = true;
         notifyCameraItemResume();
+        if (mCameraService != null) {
+            try {
+                mCameraService.enableProjectionAudio();
+            } catch (RemoteException e) {
+                LogUtil.w(TAG, "enableProjectionAudio fail: " + e);
+            }
+        }
     }
 
     @Override
@@ -78,6 +85,13 @@ public class ProjectionActivity extends AppCompatActivity {
         LogUtil.d(TAG, "onPause");
         Constants.sIsSvForeground = false;
         notifyCameraItemStop();
+        if (mCameraService != null) {
+            try {
+                mCameraService.disableProjectionAudio();
+            } catch (RemoteException e) {
+                LogUtil.w(TAG, "disableProjectionAudio fail: " + e);
+            }
+        }
     }
 
     @Override
@@ -129,6 +143,7 @@ public class ProjectionActivity extends AppCompatActivity {
             mCameraService = ICameraService.Stub.asInterface(service);
             try {
                 mCameraService.registerCameraServiceCallback(mCallback);
+                mCameraService.enableProjectionAudio();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
